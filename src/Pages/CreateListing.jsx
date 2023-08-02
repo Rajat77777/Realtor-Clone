@@ -119,7 +119,7 @@ export default function CreateListing() {
             });
 
             const formDataCopy = {
-                ...formData,imgUrls,timestamp:serverTimestamp(), 
+                ...formData,imgUrls,timestamp:serverTimestamp(),userRef:auth.currentUser.uid
             };
 
             delete formDataCopy.images;
