@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
 import {db} from "../firebase";
-import{doc, updateDoc , setDoc, collection, query, where, orderBy, getDocs} from "firebase/firestore";
+import{doc, updateDoc , setDoc, collection, query, where, orderBy, getDocs, deleteDoc} from "firebase/firestore";
 import {FcHome} from "react-icons/fc";
 import { Link } from 'react-router-dom';
 import ListingItem from '../Components/ListingItem';
@@ -85,6 +85,28 @@ export default function Profile() {
     fetchUserListings();
 
   }, [auth.currentUser.uid]);
+  async function onDelete(listingID){
+    if(window.confirm("Are you sure you want to delete the listing?")){
+
+      await deleteDoc(doc(db,"listings", listingID));
+      const updatedListings =listings.filter(
+        (listing)=>listing.id !== listingID
+      );
+      setListings(updatedListings);
+      toast.success("Successfully deleted the Listing");
+    }
+
+
+
+  }
+
+  function onEdit(listingID){
+    navigate(`/edit-listing/${listingID}`);
+
+
+
+
+  }
   return (
     <>
     
@@ -139,7 +161,7 @@ export default function Profile() {
       <h2 className='text-2xl text-center font-semibold mb-6'>My Listings</h2>
       <ul className='sm:grid sm :grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 mt-6 mb-6'>
         {listings.map((listing)=>(
-          <ListingItem key = {listing.id} id={listing.id} listing={listing.data}/>
+          <ListingItem key = {listing.id} id={listing.id} listing={listing.data} onDelete={()=>onDelete(listing.id)} onEdit={()=>onEdit(listing.id)}/>
         ))}
       </ul>
       </>
